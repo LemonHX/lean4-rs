@@ -82,11 +82,11 @@ where
 }
 #[repr(C)]
 #[derive(Default)]
-pub struct __IncompleteArrayField<T>(::std::marker::PhantomData<T>, [T; 0]);
+pub struct __IncompleteArrayField<T>(::core::marker::PhantomData<T>, [T; 0]);
 impl<T> __IncompleteArrayField<T> {
     #[inline]
     pub const fn new() -> Self {
-        __IncompleteArrayField(::std::marker::PhantomData, [])
+        __IncompleteArrayField(::core::marker::PhantomData, [])
     }
     #[inline]
     pub fn as_ptr(&self) -> *const T {
@@ -98,15 +98,15 @@ impl<T> __IncompleteArrayField<T> {
     }
     #[inline]
     pub unsafe fn as_slice(&self, len: usize) -> &[T] {
-        ::std::slice::from_raw_parts(self.as_ptr(), len)
+        ::core::slice::from_raw_parts(self.as_ptr(), len)
     }
     #[inline]
     pub unsafe fn as_mut_slice(&mut self, len: usize) -> &mut [T] {
-        ::std::slice::from_raw_parts_mut(self.as_mut_ptr(), len)
+        ::core::slice::from_raw_parts_mut(self.as_mut_ptr(), len)
     }
 }
-impl<T> ::std::fmt::Debug for __IncompleteArrayField<T> {
-    fn fmt(&self, fmt: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl<T> ::core::fmt::Debug for __IncompleteArrayField<T> {
+    fn fmt(&self, fmt: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
         fmt.write_str("__IncompleteArrayField")
     }
 }
@@ -311,31 +311,31 @@ pub const LeanReserved: u32 = 255;
 pub const LEAN_MAX_CTOR_FIELDS: u32 = 256;
 pub const LEAN_MAX_CTOR_SCALARS_SIZE: u32 = 1024;
 pub const LEAN_MAX_SMALL_NAT: i32 = -1;
-pub type wchar_t = ::std::os::raw::c_int;
+pub type wchar_t = ::core::ffi::c_int;
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Debug, Copy, Clone)]
 pub struct max_align_t {
-    pub __clang_max_align_nonce1: ::std::os::raw::c_longlong,
+    pub __clang_max_align_nonce1: ::core::ffi::c_longlong,
     pub __bindgen_padding_0: u64,
     pub __clang_max_align_nonce2: u128,
 }
 #[test]
 fn bindgen_test_layout_max_align_t() {
-    const UNINIT: ::std::mem::MaybeUninit<max_align_t> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<max_align_t> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<max_align_t>(),
+        ::core::mem::size_of::<max_align_t>(),
         32usize,
         concat!("Size of: ", stringify!(max_align_t))
     );
     assert_eq!(
-        ::std::mem::align_of::<max_align_t>(),
+        ::core::mem::align_of::<max_align_t>(),
         16usize,
         concat!("Alignment of ", stringify!(max_align_t))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__clang_max_align_nonce1) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).__clang_max_align_nonce1) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -345,7 +345,7 @@ fn bindgen_test_layout_max_align_t() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__clang_max_align_nonce2) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).__clang_max_align_nonce2) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -355,18 +355,18 @@ fn bindgen_test_layout_max_align_t() {
         )
     );
 }
-pub type __u_char = ::std::os::raw::c_uchar;
-pub type __u_short = ::std::os::raw::c_ushort;
-pub type __u_int = ::std::os::raw::c_uint;
-pub type __u_long = ::std::os::raw::c_ulong;
-pub type __int8_t = ::std::os::raw::c_schar;
-pub type __uint8_t = ::std::os::raw::c_uchar;
-pub type __int16_t = ::std::os::raw::c_short;
-pub type __uint16_t = ::std::os::raw::c_ushort;
-pub type __int32_t = ::std::os::raw::c_int;
-pub type __uint32_t = ::std::os::raw::c_uint;
-pub type __int64_t = ::std::os::raw::c_long;
-pub type __uint64_t = ::std::os::raw::c_ulong;
+pub type __u_char = ::core::ffi::c_uchar;
+pub type __u_short = ::core::ffi::c_ushort;
+pub type __u_int = ::core::ffi::c_uint;
+pub type __u_long = ::core::ffi::c_ulong;
+pub type __int8_t = ::core::ffi::c_schar;
+pub type __uint8_t = ::core::ffi::c_uchar;
+pub type __int16_t = ::core::ffi::c_short;
+pub type __uint16_t = ::core::ffi::c_ushort;
+pub type __int32_t = ::core::ffi::c_int;
+pub type __uint32_t = ::core::ffi::c_uint;
+pub type __int64_t = ::core::ffi::c_long;
+pub type __uint64_t = ::core::ffi::c_ulong;
 pub type __int_least8_t = __int8_t;
 pub type __uint_least8_t = __uint8_t;
 pub type __int_least16_t = __int16_t;
@@ -375,41 +375,41 @@ pub type __int_least32_t = __int32_t;
 pub type __uint_least32_t = __uint32_t;
 pub type __int_least64_t = __int64_t;
 pub type __uint_least64_t = __uint64_t;
-pub type __quad_t = ::std::os::raw::c_long;
-pub type __u_quad_t = ::std::os::raw::c_ulong;
-pub type __intmax_t = ::std::os::raw::c_long;
-pub type __uintmax_t = ::std::os::raw::c_ulong;
-pub type __dev_t = ::std::os::raw::c_ulong;
-pub type __uid_t = ::std::os::raw::c_uint;
-pub type __gid_t = ::std::os::raw::c_uint;
-pub type __ino_t = ::std::os::raw::c_ulong;
-pub type __ino64_t = ::std::os::raw::c_ulong;
-pub type __mode_t = ::std::os::raw::c_uint;
-pub type __nlink_t = ::std::os::raw::c_ulong;
-pub type __off_t = ::std::os::raw::c_long;
-pub type __off64_t = ::std::os::raw::c_long;
-pub type __pid_t = ::std::os::raw::c_int;
+pub type __quad_t = ::core::ffi::c_long;
+pub type __u_quad_t = ::core::ffi::c_ulong;
+pub type __intmax_t = ::core::ffi::c_long;
+pub type __uintmax_t = ::core::ffi::c_ulong;
+pub type __dev_t = ::core::ffi::c_ulong;
+pub type __uid_t = ::core::ffi::c_uint;
+pub type __gid_t = ::core::ffi::c_uint;
+pub type __ino_t = ::core::ffi::c_ulong;
+pub type __ino64_t = ::core::ffi::c_ulong;
+pub type __mode_t = ::core::ffi::c_uint;
+pub type __nlink_t = ::core::ffi::c_ulong;
+pub type __off_t = ::core::ffi::c_long;
+pub type __off64_t = ::core::ffi::c_long;
+pub type __pid_t = ::core::ffi::c_int;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __fsid_t {
-    pub __val: [::std::os::raw::c_int; 2usize],
+    pub __val: [::core::ffi::c_int; 2usize],
 }
 #[test]
 fn bindgen_test_layout___fsid_t() {
-    const UNINIT: ::std::mem::MaybeUninit<__fsid_t> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<__fsid_t> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<__fsid_t>(),
+        ::core::mem::size_of::<__fsid_t>(),
         8usize,
         concat!("Size of: ", stringify!(__fsid_t))
     );
     assert_eq!(
-        ::std::mem::align_of::<__fsid_t>(),
+        ::core::mem::align_of::<__fsid_t>(),
         4usize,
         concat!("Alignment of ", stringify!(__fsid_t))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__val) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).__val) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -419,34 +419,34 @@ fn bindgen_test_layout___fsid_t() {
         )
     );
 }
-pub type __clock_t = ::std::os::raw::c_long;
-pub type __rlim_t = ::std::os::raw::c_ulong;
-pub type __rlim64_t = ::std::os::raw::c_ulong;
-pub type __id_t = ::std::os::raw::c_uint;
-pub type __time_t = ::std::os::raw::c_long;
-pub type __useconds_t = ::std::os::raw::c_uint;
-pub type __suseconds_t = ::std::os::raw::c_long;
-pub type __suseconds64_t = ::std::os::raw::c_long;
-pub type __daddr_t = ::std::os::raw::c_int;
-pub type __key_t = ::std::os::raw::c_int;
-pub type __clockid_t = ::std::os::raw::c_int;
-pub type __timer_t = *mut ::std::os::raw::c_void;
-pub type __blksize_t = ::std::os::raw::c_long;
-pub type __blkcnt_t = ::std::os::raw::c_long;
-pub type __blkcnt64_t = ::std::os::raw::c_long;
-pub type __fsblkcnt_t = ::std::os::raw::c_ulong;
-pub type __fsblkcnt64_t = ::std::os::raw::c_ulong;
-pub type __fsfilcnt_t = ::std::os::raw::c_ulong;
-pub type __fsfilcnt64_t = ::std::os::raw::c_ulong;
-pub type __fsword_t = ::std::os::raw::c_long;
-pub type __ssize_t = ::std::os::raw::c_long;
-pub type __syscall_slong_t = ::std::os::raw::c_long;
-pub type __syscall_ulong_t = ::std::os::raw::c_ulong;
+pub type __clock_t = ::core::ffi::c_long;
+pub type __rlim_t = ::core::ffi::c_ulong;
+pub type __rlim64_t = ::core::ffi::c_ulong;
+pub type __id_t = ::core::ffi::c_uint;
+pub type __time_t = ::core::ffi::c_long;
+pub type __useconds_t = ::core::ffi::c_uint;
+pub type __suseconds_t = ::core::ffi::c_long;
+pub type __suseconds64_t = ::core::ffi::c_long;
+pub type __daddr_t = ::core::ffi::c_int;
+pub type __key_t = ::core::ffi::c_int;
+pub type __clockid_t = ::core::ffi::c_int;
+pub type __timer_t = *mut ::core::ffi::c_void;
+pub type __blksize_t = ::core::ffi::c_long;
+pub type __blkcnt_t = ::core::ffi::c_long;
+pub type __blkcnt64_t = ::core::ffi::c_long;
+pub type __fsblkcnt_t = ::core::ffi::c_ulong;
+pub type __fsblkcnt64_t = ::core::ffi::c_ulong;
+pub type __fsfilcnt_t = ::core::ffi::c_ulong;
+pub type __fsfilcnt64_t = ::core::ffi::c_ulong;
+pub type __fsword_t = ::core::ffi::c_long;
+pub type __ssize_t = ::core::ffi::c_long;
+pub type __syscall_slong_t = ::core::ffi::c_long;
+pub type __syscall_ulong_t = ::core::ffi::c_ulong;
 pub type __loff_t = __off64_t;
-pub type __caddr_t = *mut ::std::os::raw::c_char;
-pub type __intptr_t = ::std::os::raw::c_long;
-pub type __socklen_t = ::std::os::raw::c_uint;
-pub type __sig_atomic_t = ::std::os::raw::c_int;
+pub type __caddr_t = *mut ::core::ffi::c_char;
+pub type __intptr_t = ::core::ffi::c_long;
+pub type __socklen_t = ::core::ffi::c_uint;
+pub type __sig_atomic_t = ::core::ffi::c_int;
 pub type int_least8_t = __int_least8_t;
 pub type int_least16_t = __int_least16_t;
 pub type int_least32_t = __int_least32_t;
@@ -455,51 +455,51 @@ pub type uint_least8_t = __uint_least8_t;
 pub type uint_least16_t = __uint_least16_t;
 pub type uint_least32_t = __uint_least32_t;
 pub type uint_least64_t = __uint_least64_t;
-pub type int_fast8_t = ::std::os::raw::c_schar;
-pub type int_fast16_t = ::std::os::raw::c_long;
-pub type int_fast32_t = ::std::os::raw::c_long;
-pub type int_fast64_t = ::std::os::raw::c_long;
-pub type uint_fast8_t = ::std::os::raw::c_uchar;
-pub type uint_fast16_t = ::std::os::raw::c_ulong;
-pub type uint_fast32_t = ::std::os::raw::c_ulong;
-pub type uint_fast64_t = ::std::os::raw::c_ulong;
+pub type int_fast8_t = ::core::ffi::c_schar;
+pub type int_fast16_t = ::core::ffi::c_long;
+pub type int_fast32_t = ::core::ffi::c_long;
+pub type int_fast64_t = ::core::ffi::c_long;
+pub type uint_fast8_t = ::core::ffi::c_uchar;
+pub type uint_fast16_t = ::core::ffi::c_ulong;
+pub type uint_fast32_t = ::core::ffi::c_ulong;
+pub type uint_fast64_t = ::core::ffi::c_ulong;
 pub type intmax_t = __intmax_t;
 pub type uintmax_t = __uintmax_t;
 extern "C" {
     pub fn lean_notify_assert(
-        fileName: *const ::std::os::raw::c_char,
-        line: ::std::os::raw::c_int,
-        condition: *const ::std::os::raw::c_char,
+        fileName: *const ::core::ffi::c_char,
+        line: ::core::ffi::c_int,
+        condition: *const ::core::ffi::c_char,
     );
 }
 extern "C" {
     #[link_name = "lean_is_big_object_tag_rs_extern"]
     pub fn lean_is_big_object_tag(tag: u8) -> bool;
 }
-pub type assertion_failed___FILE___94 = [::std::os::raw::c_char; 1usize];
+pub type assertion_failed___FILE___94 = [::core::ffi::c_char; 1usize];
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct lean_object {
-    pub m_rc: ::std::os::raw::c_int,
+    pub m_rc: ::core::ffi::c_int,
     pub _bitfield_align_1: [u16; 0],
     pub _bitfield_1: __BindgenBitfieldUnit<[u8; 4usize]>,
 }
 #[test]
 fn bindgen_test_layout_lean_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_object> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_object>(),
+        ::core::mem::size_of::<lean_object>(),
         8usize,
         concat!("Size of: ", stringify!(lean_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_object>(),
+        ::core::mem::align_of::<lean_object>(),
         4usize,
         concat!("Alignment of ", stringify!(lean_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_rc) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_rc) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -511,55 +511,55 @@ fn bindgen_test_layout_lean_object() {
 }
 impl lean_object {
     #[inline]
-    pub fn m_cs_sz(&self) -> ::std::os::raw::c_uint {
-        unsafe { ::std::mem::transmute(self._bitfield_1.get(0usize, 16u8) as u32) }
+    pub fn m_cs_sz(&self) -> ::core::ffi::c_uint {
+        unsafe { ::core::mem::transmute(self._bitfield_1.get(0usize, 16u8) as u32) }
     }
     #[inline]
-    pub fn set_m_cs_sz(&mut self, val: ::std::os::raw::c_uint) {
+    pub fn set_m_cs_sz(&mut self, val: ::core::ffi::c_uint) {
         unsafe {
-            let val: u32 = ::std::mem::transmute(val);
+            let val: u32 = ::core::mem::transmute(val);
             self._bitfield_1.set(0usize, 16u8, val as u64)
         }
     }
     #[inline]
-    pub fn m_other(&self) -> ::std::os::raw::c_uint {
-        unsafe { ::std::mem::transmute(self._bitfield_1.get(16usize, 8u8) as u32) }
+    pub fn m_other(&self) -> ::core::ffi::c_uint {
+        unsafe { ::core::mem::transmute(self._bitfield_1.get(16usize, 8u8) as u32) }
     }
     #[inline]
-    pub fn set_m_other(&mut self, val: ::std::os::raw::c_uint) {
+    pub fn set_m_other(&mut self, val: ::core::ffi::c_uint) {
         unsafe {
-            let val: u32 = ::std::mem::transmute(val);
+            let val: u32 = ::core::mem::transmute(val);
             self._bitfield_1.set(16usize, 8u8, val as u64)
         }
     }
     #[inline]
-    pub fn m_tag(&self) -> ::std::os::raw::c_uint {
-        unsafe { ::std::mem::transmute(self._bitfield_1.get(24usize, 8u8) as u32) }
+    pub fn m_tag(&self) -> ::core::ffi::c_uint {
+        unsafe { ::core::mem::transmute(self._bitfield_1.get(24usize, 8u8) as u32) }
     }
     #[inline]
-    pub fn set_m_tag(&mut self, val: ::std::os::raw::c_uint) {
+    pub fn set_m_tag(&mut self, val: ::core::ffi::c_uint) {
         unsafe {
-            let val: u32 = ::std::mem::transmute(val);
+            let val: u32 = ::core::mem::transmute(val);
             self._bitfield_1.set(24usize, 8u8, val as u64)
         }
     }
     #[inline]
     pub fn new_bitfield_1(
-        m_cs_sz: ::std::os::raw::c_uint,
-        m_other: ::std::os::raw::c_uint,
-        m_tag: ::std::os::raw::c_uint,
+        m_cs_sz: ::core::ffi::c_uint,
+        m_other: ::core::ffi::c_uint,
+        m_tag: ::core::ffi::c_uint,
     ) -> __BindgenBitfieldUnit<[u8; 4usize]> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 4usize]> = Default::default();
         __bindgen_bitfield_unit.set(0usize, 16u8, {
-            let m_cs_sz: u32 = unsafe { ::std::mem::transmute(m_cs_sz) };
+            let m_cs_sz: u32 = unsafe { ::core::mem::transmute(m_cs_sz) };
             m_cs_sz as u64
         });
         __bindgen_bitfield_unit.set(16usize, 8u8, {
-            let m_other: u32 = unsafe { ::std::mem::transmute(m_other) };
+            let m_other: u32 = unsafe { ::core::mem::transmute(m_other) };
             m_other as u64
         });
         __bindgen_bitfield_unit.set(24usize, 8u8, {
-            let m_tag: u32 = unsafe { ::std::mem::transmute(m_tag) };
+            let m_tag: u32 = unsafe { ::core::mem::transmute(m_tag) };
             m_tag as u64
         });
         __bindgen_bitfield_unit
@@ -578,20 +578,20 @@ pub struct lean_ctor_object {
 }
 #[test]
 fn bindgen_test_layout_lean_ctor_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_ctor_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_ctor_object> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_ctor_object>(),
+        ::core::mem::size_of::<lean_ctor_object>(),
         8usize,
         concat!("Size of: ", stringify!(lean_ctor_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_ctor_object>(),
+        ::core::mem::align_of::<lean_ctor_object>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_ctor_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -601,7 +601,7 @@ fn bindgen_test_layout_lean_ctor_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_objs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_objs) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -621,20 +621,20 @@ pub struct lean_array_object {
 }
 #[test]
 fn bindgen_test_layout_lean_array_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_array_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_array_object> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_array_object>(),
+        ::core::mem::size_of::<lean_array_object>(),
         24usize,
         concat!("Size of: ", stringify!(lean_array_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_array_object>(),
+        ::core::mem::align_of::<lean_array_object>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_array_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -644,7 +644,7 @@ fn bindgen_test_layout_lean_array_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_size) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_size) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -654,7 +654,7 @@ fn bindgen_test_layout_lean_array_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_capacity) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_capacity) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -664,7 +664,7 @@ fn bindgen_test_layout_lean_array_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_data) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_data) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -684,20 +684,20 @@ pub struct lean_sarray_object {
 }
 #[test]
 fn bindgen_test_layout_lean_sarray_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_sarray_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_sarray_object> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_sarray_object>(),
+        ::core::mem::size_of::<lean_sarray_object>(),
         24usize,
         concat!("Size of: ", stringify!(lean_sarray_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_sarray_object>(),
+        ::core::mem::align_of::<lean_sarray_object>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_sarray_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -707,7 +707,7 @@ fn bindgen_test_layout_lean_sarray_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_size) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_size) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -717,7 +717,7 @@ fn bindgen_test_layout_lean_sarray_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_capacity) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_capacity) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -727,7 +727,7 @@ fn bindgen_test_layout_lean_sarray_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_data) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_data) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -744,24 +744,24 @@ pub struct lean_string_object {
     pub m_size: usize,
     pub m_capacity: usize,
     pub m_length: usize,
-    pub m_data: __IncompleteArrayField<::std::os::raw::c_char>,
+    pub m_data: __IncompleteArrayField<::core::ffi::c_char>,
 }
 #[test]
 fn bindgen_test_layout_lean_string_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_string_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_string_object> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_string_object>(),
+        ::core::mem::size_of::<lean_string_object>(),
         32usize,
         concat!("Size of: ", stringify!(lean_string_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_string_object>(),
+        ::core::mem::align_of::<lean_string_object>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_string_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -771,7 +771,7 @@ fn bindgen_test_layout_lean_string_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_size) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_size) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -781,7 +781,7 @@ fn bindgen_test_layout_lean_string_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_capacity) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_capacity) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -791,7 +791,7 @@ fn bindgen_test_layout_lean_string_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_length) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_length) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -801,7 +801,7 @@ fn bindgen_test_layout_lean_string_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_data) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_data) as usize - ptr as usize },
         32usize,
         concat!(
             "Offset of field: ",
@@ -815,27 +815,28 @@ fn bindgen_test_layout_lean_string_object() {
 #[derive(Debug)]
 pub struct lean_closure_object {
     pub m_header: lean_object,
-    pub m_fun: *mut ::std::os::raw::c_void,
+    pub m_fun: *mut ::core::ffi::c_void,
     pub m_arity: u16,
     pub m_num_fixed: u16,
     pub m_objs: __IncompleteArrayField<*mut lean_object>,
 }
 #[test]
 fn bindgen_test_layout_lean_closure_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_closure_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_closure_object> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_closure_object>(),
+        ::core::mem::size_of::<lean_closure_object>(),
         24usize,
         concat!("Size of: ", stringify!(lean_closure_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_closure_object>(),
+        ::core::mem::align_of::<lean_closure_object>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_closure_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -845,7 +846,7 @@ fn bindgen_test_layout_lean_closure_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_fun) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_fun) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -855,7 +856,7 @@ fn bindgen_test_layout_lean_closure_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_arity) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_arity) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -865,7 +866,7 @@ fn bindgen_test_layout_lean_closure_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_num_fixed) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_num_fixed) as usize - ptr as usize },
         18usize,
         concat!(
             "Offset of field: ",
@@ -875,7 +876,7 @@ fn bindgen_test_layout_lean_closure_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_objs) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_objs) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -893,20 +894,20 @@ pub struct lean_ref_object {
 }
 #[test]
 fn bindgen_test_layout_lean_ref_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_ref_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_ref_object> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_ref_object>(),
+        ::core::mem::size_of::<lean_ref_object>(),
         16usize,
         concat!("Size of: ", stringify!(lean_ref_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_ref_object>(),
+        ::core::mem::align_of::<lean_ref_object>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_ref_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -916,7 +917,7 @@ fn bindgen_test_layout_lean_ref_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_value) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -935,20 +936,20 @@ pub struct lean_thunk_object {
 }
 #[test]
 fn bindgen_test_layout_lean_thunk_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_thunk_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_thunk_object> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_thunk_object>(),
+        ::core::mem::size_of::<lean_thunk_object>(),
         24usize,
         concat!("Size of: ", stringify!(lean_thunk_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_thunk_object>(),
+        ::core::mem::align_of::<lean_thunk_object>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_thunk_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -958,7 +959,7 @@ fn bindgen_test_layout_lean_thunk_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_value) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -968,7 +969,7 @@ fn bindgen_test_layout_lean_thunk_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_closure) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_closure) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -984,27 +985,27 @@ pub struct lean_task_imp {
     pub m_closure: *mut lean_object,
     pub m_head_dep: *mut lean_task,
     pub m_next_dep: *mut lean_task,
-    pub m_prio: ::std::os::raw::c_uint,
+    pub m_prio: ::core::ffi::c_uint,
     pub m_canceled: u8,
     pub m_keep_alive: u8,
     pub m_deleted: u8,
 }
 #[test]
 fn bindgen_test_layout_lean_task_imp() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_task_imp> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_task_imp> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_task_imp>(),
+        ::core::mem::size_of::<lean_task_imp>(),
         32usize,
         concat!("Size of: ", stringify!(lean_task_imp))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_task_imp>(),
+        ::core::mem::align_of::<lean_task_imp>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_task_imp))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_closure) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_closure) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1014,7 +1015,7 @@ fn bindgen_test_layout_lean_task_imp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_head_dep) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_head_dep) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1024,7 +1025,7 @@ fn bindgen_test_layout_lean_task_imp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_next_dep) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_next_dep) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -1034,7 +1035,7 @@ fn bindgen_test_layout_lean_task_imp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_prio) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_prio) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
@@ -1044,7 +1045,7 @@ fn bindgen_test_layout_lean_task_imp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_canceled) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_canceled) as usize - ptr as usize },
         28usize,
         concat!(
             "Offset of field: ",
@@ -1054,7 +1055,7 @@ fn bindgen_test_layout_lean_task_imp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_keep_alive) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_keep_alive) as usize - ptr as usize },
         29usize,
         concat!(
             "Offset of field: ",
@@ -1064,7 +1065,7 @@ fn bindgen_test_layout_lean_task_imp() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_deleted) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_deleted) as usize - ptr as usize },
         30usize,
         concat!(
             "Offset of field: ",
@@ -1083,20 +1084,20 @@ pub struct lean_task {
 }
 #[test]
 fn bindgen_test_layout_lean_task() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_task> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_task> = ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_task>(),
+        ::core::mem::size_of::<lean_task>(),
         24usize,
         concat!("Size of: ", stringify!(lean_task))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_task>(),
+        ::core::mem::align_of::<lean_task>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_task))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1106,7 +1107,7 @@ fn bindgen_test_layout_lean_task() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_value) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_value) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1116,7 +1117,7 @@ fn bindgen_test_layout_lean_task() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_imp) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_imp) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -1128,9 +1129,9 @@ fn bindgen_test_layout_lean_task() {
 }
 pub type lean_task_object = lean_task;
 pub type lean_external_finalize_proc =
-    ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>;
-pub type lean_external_foreach_proc = ::std::option::Option<
-    unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void, arg2: b_lean_obj_arg),
+    ::core::option::Option<unsafe extern "C" fn(arg1: *mut ::core::ffi::c_void)>;
+pub type lean_external_foreach_proc = ::core::option::Option<
+    unsafe extern "C" fn(arg1: *mut ::core::ffi::c_void, arg2: b_lean_obj_arg),
 >;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -1140,20 +1141,21 @@ pub struct lean_external_class {
 }
 #[test]
 fn bindgen_test_layout_lean_external_class() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_external_class> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_external_class> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_external_class>(),
+        ::core::mem::size_of::<lean_external_class>(),
         16usize,
         concat!("Size of: ", stringify!(lean_external_class))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_external_class>(),
+        ::core::mem::align_of::<lean_external_class>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_external_class))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_finalize) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_finalize) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1163,7 +1165,7 @@ fn bindgen_test_layout_lean_external_class() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_foreach) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_foreach) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1184,24 +1186,25 @@ extern "C" {
 pub struct lean_external_object {
     pub m_header: lean_object,
     pub m_class: *mut lean_external_class,
-    pub m_data: *mut ::std::os::raw::c_void,
+    pub m_data: *mut ::core::ffi::c_void,
 }
 #[test]
 fn bindgen_test_layout_lean_external_object() {
-    const UNINIT: ::std::mem::MaybeUninit<lean_external_object> = ::std::mem::MaybeUninit::uninit();
+    const UNINIT: ::core::mem::MaybeUninit<lean_external_object> =
+        ::core::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<lean_external_object>(),
+        ::core::mem::size_of::<lean_external_object>(),
         24usize,
         concat!("Size of: ", stringify!(lean_external_object))
     );
     assert_eq!(
-        ::std::mem::align_of::<lean_external_object>(),
+        ::core::mem::align_of::<lean_external_object>(),
         8usize,
         concat!("Alignment of ", stringify!(lean_external_object))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_header) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
@@ -1211,7 +1214,7 @@ fn bindgen_test_layout_lean_external_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_class) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_class) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
@@ -1221,7 +1224,7 @@ fn bindgen_test_layout_lean_external_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).m_data) as usize - ptr as usize },
+        unsafe { ::core::ptr::addr_of!((*ptr).m_data) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
@@ -1253,7 +1256,7 @@ extern "C" {
     pub fn lean_panic_fn(default_val: *mut lean_object, msg: *mut lean_object) -> *mut lean_object;
 }
 extern "C" {
-    pub fn lean_internal_panic(msg: *const ::std::os::raw::c_char) -> !;
+    pub fn lean_internal_panic(msg: *const ::core::ffi::c_char) -> !;
 }
 extern "C" {
     pub fn lean_internal_panic_out_of_memory() -> !;
@@ -1270,40 +1273,40 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_get_slot_idx_rs_extern"]
-    pub fn lean_get_slot_idx(sz: ::std::os::raw::c_uint) -> ::std::os::raw::c_uint;
+    pub fn lean_get_slot_idx(sz: ::core::ffi::c_uint) -> ::core::ffi::c_uint;
 }
 extern "C" {
     pub fn lean_alloc_small(
-        sz: ::std::os::raw::c_uint,
-        slot_idx: ::std::os::raw::c_uint,
-    ) -> *mut ::std::os::raw::c_void;
+        sz: ::core::ffi::c_uint,
+        slot_idx: ::core::ffi::c_uint,
+    ) -> *mut ::core::ffi::c_void;
 }
 extern "C" {
-    pub fn lean_free_small(p: *mut ::std::os::raw::c_void);
+    pub fn lean_free_small(p: *mut ::core::ffi::c_void);
 }
 extern "C" {
-    pub fn lean_small_mem_size(p: *mut ::std::os::raw::c_void) -> ::std::os::raw::c_uint;
+    pub fn lean_small_mem_size(p: *mut ::core::ffi::c_void) -> ::core::ffi::c_uint;
 }
 extern "C" {
     pub fn lean_inc_heartbeat();
 }
 extern "C" {
-    pub fn malloc(arg1: ::std::os::raw::c_ulong) -> *mut ::std::os::raw::c_void;
+    pub fn malloc(arg1: ::core::ffi::c_ulong) -> *mut ::core::ffi::c_void;
 }
 extern "C" {
     #[link_name = "lean_alloc_small_object_rs_extern"]
-    pub fn lean_alloc_small_object(sz: ::std::os::raw::c_uint) -> *mut lean_object;
+    pub fn lean_alloc_small_object(sz: ::core::ffi::c_uint) -> *mut lean_object;
 }
 extern "C" {
     #[link_name = "lean_alloc_ctor_memory_rs_extern"]
-    pub fn lean_alloc_ctor_memory(sz: ::std::os::raw::c_uint) -> *mut lean_object;
+    pub fn lean_alloc_ctor_memory(sz: ::core::ffi::c_uint) -> *mut lean_object;
 }
 extern "C" {
     #[link_name = "lean_small_object_size_rs_extern"]
-    pub fn lean_small_object_size(o: *mut lean_object) -> ::std::os::raw::c_uint;
+    pub fn lean_small_object_size(o: *mut lean_object) -> ::core::ffi::c_uint;
 }
 extern "C" {
-    pub fn free(arg1: *mut ::std::os::raw::c_void);
+    pub fn free(arg1: *mut ::core::ffi::c_void);
 }
 extern "C" {
     #[link_name = "lean_free_small_object_rs_extern"]
@@ -1321,7 +1324,7 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_ptr_other_rs_extern"]
-    pub fn lean_ptr_other(o: *mut lean_object) -> ::std::os::raw::c_uint;
+    pub fn lean_ptr_other(o: *mut lean_object) -> ::core::ffi::c_uint;
 }
 extern "C" {
     pub fn lean_object_byte_size(o: *mut lean_object) -> usize;
@@ -1344,13 +1347,13 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_get_rc_mt_addr_rs_extern"]
-    pub fn lean_get_rc_mt_addr(o: *mut lean_object) -> *mut ::std::os::raw::c_int;
+    pub fn lean_get_rc_mt_addr(o: *mut lean_object) -> *mut ::core::ffi::c_int;
 }
 extern "C" {
     pub fn lean_inc_ref_cold(o: *mut lean_object);
 }
 extern "C" {
-    pub fn lean_inc_ref_n_cold(o: *mut lean_object, n: ::std::os::raw::c_uint);
+    pub fn lean_inc_ref_n_cold(o: *mut lean_object, n: ::core::ffi::c_uint);
 }
 extern "C" {
     #[link_name = "lean_inc_ref_rs_extern"]
@@ -1424,7 +1427,7 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_obj_tag_rs_extern"]
-    pub fn lean_obj_tag(o: *mut lean_object) -> ::std::os::raw::c_uint;
+    pub fn lean_obj_tag(o: *mut lean_object) -> ::core::ffi::c_uint;
 }
 extern "C" {
     #[link_name = "lean_to_ctor_rs_extern"]
@@ -1480,8 +1483,8 @@ extern "C" {
     #[link_name = "lean_set_st_header_rs_extern"]
     pub fn lean_set_st_header(
         o: *mut lean_object,
-        tag: ::std::os::raw::c_uint,
-        other: ::std::os::raw::c_uint,
+        tag: ::core::ffi::c_uint,
+        other: ::core::ffi::c_uint,
     );
 }
 extern "C" {
@@ -1489,21 +1492,21 @@ extern "C" {
     pub fn lean_set_non_heap_header(
         o: *mut lean_object,
         sz: usize,
-        tag: ::std::os::raw::c_uint,
-        other: ::std::os::raw::c_uint,
+        tag: ::core::ffi::c_uint,
+        other: ::core::ffi::c_uint,
     );
 }
 extern "C" {
     #[link_name = "lean_set_non_heap_header_for_big_rs_extern"]
     pub fn lean_set_non_heap_header_for_big(
         o: *mut lean_object,
-        tag: ::std::os::raw::c_uint,
-        other: ::std::os::raw::c_uint,
+        tag: ::core::ffi::c_uint,
+        other: ::core::ffi::c_uint,
     );
 }
 extern "C" {
     #[link_name = "lean_ctor_num_objs_rs_extern"]
-    pub fn lean_ctor_num_objs(o: *mut lean_object) -> ::std::os::raw::c_uint;
+    pub fn lean_ctor_num_objs(o: *mut lean_object) -> ::core::ffi::c_uint;
 }
 extern "C" {
     #[link_name = "lean_ctor_obj_cptr_rs_extern"]
@@ -1516,18 +1519,18 @@ extern "C" {
 extern "C" {
     #[link_name = "lean_alloc_ctor_rs_extern"]
     pub fn lean_alloc_ctor(
-        tag: ::std::os::raw::c_uint,
-        num_objs: ::std::os::raw::c_uint,
-        scalar_sz: ::std::os::raw::c_uint,
+        tag: ::core::ffi::c_uint,
+        num_objs: ::core::ffi::c_uint,
+        scalar_sz: ::core::ffi::c_uint,
     ) -> *mut lean_object;
 }
 extern "C" {
     #[link_name = "lean_ctor_get_rs_extern"]
-    pub fn lean_ctor_get(o: b_lean_obj_arg, i: ::std::os::raw::c_uint) -> b_lean_obj_res;
+    pub fn lean_ctor_get(o: b_lean_obj_arg, i: ::core::ffi::c_uint) -> b_lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_ctor_set_rs_extern"]
-    pub fn lean_ctor_set(o: b_lean_obj_arg, i: ::std::os::raw::c_uint, v: lean_obj_arg);
+    pub fn lean_ctor_set(o: b_lean_obj_arg, i: ::core::ffi::c_uint, v: lean_obj_arg);
 }
 extern "C" {
     #[link_name = "lean_ctor_set_tag_rs_extern"]
@@ -1535,67 +1538,67 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_ctor_release_rs_extern"]
-    pub fn lean_ctor_release(o: b_lean_obj_arg, i: ::std::os::raw::c_uint);
+    pub fn lean_ctor_release(o: b_lean_obj_arg, i: ::core::ffi::c_uint);
 }
 extern "C" {
     #[link_name = "lean_ctor_get_usize_rs_extern"]
-    pub fn lean_ctor_get_usize(o: b_lean_obj_arg, i: ::std::os::raw::c_uint) -> usize;
+    pub fn lean_ctor_get_usize(o: b_lean_obj_arg, i: ::core::ffi::c_uint) -> usize;
 }
 extern "C" {
     #[link_name = "lean_ctor_get_uint8_rs_extern"]
-    pub fn lean_ctor_get_uint8(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint) -> u8;
+    pub fn lean_ctor_get_uint8(o: b_lean_obj_arg, offset: ::core::ffi::c_uint) -> u8;
 }
 extern "C" {
     #[link_name = "lean_ctor_get_uint16_rs_extern"]
-    pub fn lean_ctor_get_uint16(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint) -> u16;
+    pub fn lean_ctor_get_uint16(o: b_lean_obj_arg, offset: ::core::ffi::c_uint) -> u16;
 }
 extern "C" {
     #[link_name = "lean_ctor_get_uint32_rs_extern"]
-    pub fn lean_ctor_get_uint32(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint) -> u32;
+    pub fn lean_ctor_get_uint32(o: b_lean_obj_arg, offset: ::core::ffi::c_uint) -> u32;
 }
 extern "C" {
     #[link_name = "lean_ctor_get_uint64_rs_extern"]
-    pub fn lean_ctor_get_uint64(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint) -> u64;
+    pub fn lean_ctor_get_uint64(o: b_lean_obj_arg, offset: ::core::ffi::c_uint) -> u64;
 }
 extern "C" {
     #[link_name = "lean_ctor_get_float_rs_extern"]
-    pub fn lean_ctor_get_float(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint) -> f64;
+    pub fn lean_ctor_get_float(o: b_lean_obj_arg, offset: ::core::ffi::c_uint) -> f64;
 }
 extern "C" {
     #[link_name = "lean_ctor_set_usize_rs_extern"]
-    pub fn lean_ctor_set_usize(o: b_lean_obj_arg, i: ::std::os::raw::c_uint, v: usize);
+    pub fn lean_ctor_set_usize(o: b_lean_obj_arg, i: ::core::ffi::c_uint, v: usize);
 }
 extern "C" {
     #[link_name = "lean_ctor_set_uint8_rs_extern"]
-    pub fn lean_ctor_set_uint8(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint, v: u8);
+    pub fn lean_ctor_set_uint8(o: b_lean_obj_arg, offset: ::core::ffi::c_uint, v: u8);
 }
 extern "C" {
     #[link_name = "lean_ctor_set_uint16_rs_extern"]
-    pub fn lean_ctor_set_uint16(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint, v: u16);
+    pub fn lean_ctor_set_uint16(o: b_lean_obj_arg, offset: ::core::ffi::c_uint, v: u16);
 }
 extern "C" {
     #[link_name = "lean_ctor_set_uint32_rs_extern"]
-    pub fn lean_ctor_set_uint32(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint, v: u32);
+    pub fn lean_ctor_set_uint32(o: b_lean_obj_arg, offset: ::core::ffi::c_uint, v: u32);
 }
 extern "C" {
     #[link_name = "lean_ctor_set_uint64_rs_extern"]
-    pub fn lean_ctor_set_uint64(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint, v: u64);
+    pub fn lean_ctor_set_uint64(o: b_lean_obj_arg, offset: ::core::ffi::c_uint, v: u64);
 }
 extern "C" {
     #[link_name = "lean_ctor_set_float_rs_extern"]
-    pub fn lean_ctor_set_float(o: b_lean_obj_arg, offset: ::std::os::raw::c_uint, v: f64);
+    pub fn lean_ctor_set_float(o: b_lean_obj_arg, offset: ::core::ffi::c_uint, v: f64);
 }
 extern "C" {
     #[link_name = "lean_closure_fun_rs_extern"]
-    pub fn lean_closure_fun(o: *mut lean_object) -> *mut ::std::os::raw::c_void;
+    pub fn lean_closure_fun(o: *mut lean_object) -> *mut ::core::ffi::c_void;
 }
 extern "C" {
     #[link_name = "lean_closure_arity_rs_extern"]
-    pub fn lean_closure_arity(o: *mut lean_object) -> ::std::os::raw::c_uint;
+    pub fn lean_closure_arity(o: *mut lean_object) -> ::core::ffi::c_uint;
 }
 extern "C" {
     #[link_name = "lean_closure_num_fixed_rs_extern"]
-    pub fn lean_closure_num_fixed(o: *mut lean_object) -> ::std::os::raw::c_uint;
+    pub fn lean_closure_num_fixed(o: *mut lean_object) -> ::core::ffi::c_uint;
 }
 extern "C" {
     #[link_name = "lean_closure_arg_cptr_rs_extern"]
@@ -1604,18 +1607,18 @@ extern "C" {
 extern "C" {
     #[link_name = "lean_alloc_closure_rs_extern"]
     pub fn lean_alloc_closure(
-        fun: *mut ::std::os::raw::c_void,
-        arity: ::std::os::raw::c_uint,
-        num_fixed: ::std::os::raw::c_uint,
+        fun: *mut ::core::ffi::c_void,
+        arity: ::core::ffi::c_uint,
+        num_fixed: ::core::ffi::c_uint,
     ) -> lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_closure_get_rs_extern"]
-    pub fn lean_closure_get(o: b_lean_obj_arg, i: ::std::os::raw::c_uint) -> b_lean_obj_res;
+    pub fn lean_closure_get(o: b_lean_obj_arg, i: ::core::ffi::c_uint) -> b_lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_closure_set_rs_extern"]
-    pub fn lean_closure_set(o: u_lean_obj_arg, i: ::std::os::raw::c_uint, a: lean_obj_arg);
+    pub fn lean_closure_set(o: u_lean_obj_arg, i: ::core::ffi::c_uint, a: lean_obj_arg);
 }
 extern "C" {
     pub fn lean_apply_1(f: *mut lean_object, a1: *mut lean_object) -> *mut lean_object;
@@ -1833,14 +1836,14 @@ extern "C" {
 extern "C" {
     pub fn lean_apply_n(
         f: *mut lean_object,
-        n: ::std::os::raw::c_uint,
+        n: ::core::ffi::c_uint,
         args: *mut *mut lean_object,
     ) -> *mut lean_object;
 }
 extern "C" {
     pub fn lean_apply_m(
         f: *mut lean_object,
-        n: ::std::os::raw::c_uint,
+        n: ::core::ffi::c_uint,
         args: *mut *mut lean_object,
     ) -> *mut lean_object;
 }
@@ -1977,14 +1980,14 @@ extern "C" {
 extern "C" {
     #[link_name = "lean_alloc_sarray_rs_extern"]
     pub fn lean_alloc_sarray(
-        elem_size: ::std::os::raw::c_uint,
+        elem_size: ::core::ffi::c_uint,
         size: usize,
         capacity: usize,
     ) -> lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_sarray_elem_size_rs_extern"]
-    pub fn lean_sarray_elem_size(o: *mut lean_object) -> ::std::os::raw::c_uint;
+    pub fn lean_sarray_elem_size(o: *mut lean_object) -> ::core::ffi::c_uint;
 }
 extern "C" {
     #[link_name = "lean_sarray_capacity_rs_extern"]
@@ -2106,10 +2109,10 @@ extern "C" {
     pub fn lean_alloc_string(size: usize, capacity: usize, len: usize) -> lean_obj_res;
 }
 extern "C" {
-    pub fn lean_utf8_strlen(str_: *const ::std::os::raw::c_char) -> usize;
+    pub fn lean_utf8_strlen(str_: *const ::core::ffi::c_char) -> usize;
 }
 extern "C" {
-    pub fn lean_utf8_n_strlen(str_: *const ::std::os::raw::c_char, n: usize) -> usize;
+    pub fn lean_utf8_n_strlen(str_: *const ::core::ffi::c_char, n: usize) -> usize;
 }
 extern "C" {
     #[link_name = "lean_string_capacity_rs_extern"]
@@ -2124,14 +2127,14 @@ extern "C" {
     pub fn lean_char_default_value() -> u32;
 }
 extern "C" {
-    pub fn lean_mk_string_from_bytes(s: *const ::std::os::raw::c_char, sz: usize) -> lean_obj_res;
+    pub fn lean_mk_string_from_bytes(s: *const ::core::ffi::c_char, sz: usize) -> lean_obj_res;
 }
 extern "C" {
-    pub fn lean_mk_string(s: *const ::std::os::raw::c_char) -> lean_obj_res;
+    pub fn lean_mk_string(s: *const ::core::ffi::c_char) -> lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_string_cstr_rs_extern"]
-    pub fn lean_string_cstr(o: b_lean_obj_arg) -> *const ::std::os::raw::c_char;
+    pub fn lean_string_cstr(o: b_lean_obj_arg) -> *const ::core::ffi::c_char;
 }
 extern "C" {
     #[link_name = "lean_string_size_rs_extern"]
@@ -2162,10 +2165,10 @@ extern "C" {
 }
 extern "C" {
     pub fn lean_string_utf8_get_fast_cold(
-        str_: *const ::std::os::raw::c_char,
+        str_: *const ::core::ffi::c_char,
         i: usize,
         size: usize,
-        c: ::std::os::raw::c_uchar,
+        c: ::core::ffi::c_uchar,
     ) -> u32;
 }
 extern "C" {
@@ -2176,7 +2179,7 @@ extern "C" {
     pub fn lean_string_utf8_next(s: b_lean_obj_arg, i: b_lean_obj_arg) -> lean_obj_res;
 }
 extern "C" {
-    pub fn lean_string_utf8_next_fast_cold(i: usize, c: ::std::os::raw::c_uchar) -> lean_obj_res;
+    pub fn lean_string_utf8_next_fast_cold(i: usize, c: ::core::ffi::c_uchar) -> lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_string_utf8_next_fast_rs_extern"]
@@ -2251,7 +2254,7 @@ extern "C" {
     pub fn lean_init_task_manager();
 }
 extern "C" {
-    pub fn lean_init_task_manager_using(num_workers: ::std::os::raw::c_uint);
+    pub fn lean_init_task_manager_using(num_workers: ::core::ffi::c_uint);
 }
 extern "C" {
     pub fn lean_finalize_task_manager();
@@ -2259,7 +2262,7 @@ extern "C" {
 extern "C" {
     pub fn lean_task_spawn_core(
         c: lean_obj_arg,
-        prio: ::std::os::raw::c_uint,
+        prio: ::core::ffi::c_uint,
         keep_alive: bool,
     ) -> lean_obj_res;
 }
@@ -2274,7 +2277,7 @@ extern "C" {
     pub fn lean_task_bind_core(
         x: lean_obj_arg,
         f: lean_obj_arg,
-        prio: ::std::os::raw::c_uint,
+        prio: ::core::ffi::c_uint,
         keep_alive: bool,
     ) -> lean_obj_res;
 }
@@ -2286,7 +2289,7 @@ extern "C" {
     pub fn lean_task_map_core(
         f: lean_obj_arg,
         t: lean_obj_arg,
-        prio: ::std::os::raw::c_uint,
+        prio: ::core::ffi::c_uint,
         keep_alive: bool,
     ) -> lean_obj_res;
 }
@@ -2317,7 +2320,7 @@ extern "C" {
     #[link_name = "lean_alloc_external_rs_extern"]
     pub fn lean_alloc_external(
         cls: *mut lean_external_class,
-        data: *mut ::std::os::raw::c_void,
+        data: *mut ::core::ffi::c_void,
     ) -> *mut lean_object;
 }
 extern "C" {
@@ -2326,7 +2329,7 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_get_external_data_rs_extern"]
-    pub fn lean_get_external_data(o: *mut lean_object) -> *mut ::std::os::raw::c_void;
+    pub fn lean_get_external_data(o: *mut lean_object) -> *mut ::core::ffi::c_void;
 }
 extern "C" {
     pub fn lean_nat_big_succ(a: *mut lean_object) -> *mut lean_object;
@@ -2368,7 +2371,7 @@ extern "C" {
     pub fn lean_nat_big_xor(a1: *mut lean_object, a2: *mut lean_object) -> *mut lean_object;
 }
 extern "C" {
-    pub fn lean_cstr_to_nat(n: *const ::std::os::raw::c_char) -> lean_obj_res;
+    pub fn lean_cstr_to_nat(n: *const ::core::ffi::c_char) -> lean_obj_res;
 }
 extern "C" {
     pub fn lean_big_usize_to_nat(n: usize) -> lean_obj_res;
@@ -2382,7 +2385,7 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_unsigned_to_nat_rs_extern"]
-    pub fn lean_unsigned_to_nat(n: ::std::os::raw::c_uint) -> lean_obj_res;
+    pub fn lean_unsigned_to_nat(n: ::core::ffi::c_uint) -> lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_uint64_to_nat_rs_extern"]
@@ -2498,10 +2501,10 @@ extern "C" {
     pub fn lean_int_big_nonneg(a: *mut lean_object) -> bool;
 }
 extern "C" {
-    pub fn lean_cstr_to_int(n: *const ::std::os::raw::c_char) -> *mut lean_object;
+    pub fn lean_cstr_to_int(n: *const ::core::ffi::c_char) -> *mut lean_object;
 }
 extern "C" {
-    pub fn lean_big_int_to_int(n: ::std::os::raw::c_int) -> *mut lean_object;
+    pub fn lean_big_int_to_int(n: ::core::ffi::c_int) -> *mut lean_object;
 }
 extern "C" {
     pub fn lean_big_size_t_to_int(n: usize) -> *mut lean_object;
@@ -2511,7 +2514,7 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_int_to_int_rs_extern"]
-    pub fn lean_int_to_int(n: ::std::os::raw::c_int) -> lean_obj_res;
+    pub fn lean_int_to_int(n: ::core::ffi::c_int) -> lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_int64_to_int_rs_extern"]
@@ -2523,7 +2526,7 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_scalar_to_int_rs_extern"]
-    pub fn lean_scalar_to_int(a: b_lean_obj_arg) -> ::std::os::raw::c_int;
+    pub fn lean_scalar_to_int(a: b_lean_obj_arg) -> ::core::ffi::c_int;
 }
 extern "C" {
     #[link_name = "lean_nat_to_int_rs_extern"]
@@ -3091,7 +3094,7 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "lean_unbox_uint32_rs_extern"]
-    pub fn lean_unbox_uint32(o: b_lean_obj_arg) -> ::std::os::raw::c_uint;
+    pub fn lean_unbox_uint32(o: b_lean_obj_arg) -> ::core::ffi::c_uint;
 }
 extern "C" {
     #[link_name = "lean_box_uint64_rs_extern"]
@@ -3127,10 +3130,7 @@ extern "C" {
     pub fn lean_dbg_trace_if_shared(s: lean_obj_arg, a: lean_obj_arg) -> *mut lean_object;
 }
 extern "C" {
-    pub fn lean_decode_io_error(
-        errnum: ::std::os::raw::c_int,
-        fname: b_lean_obj_arg,
-    ) -> lean_obj_res;
+    pub fn lean_decode_io_error(errnum: ::core::ffi::c_int, fname: b_lean_obj_arg) -> lean_obj_res;
 }
 extern "C" {
     #[link_name = "lean_io_mk_world_rs_extern"]

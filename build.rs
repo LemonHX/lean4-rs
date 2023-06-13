@@ -52,12 +52,13 @@ fn main() {
 
     let bindings = bindgen::Builder::default()
         .header("lean.h")
+        .use_core()
         .wrap_static_fns(true)
         .wrap_static_fns_path("wrap_static_fns.c")
         .wrap_static_fns_suffix("_rs_extern")
         .generate()
         .expect("Unable to generate bindings");
-    
+
     // use cc to compile the C wrapper
     cc::Build::new()
         .file("wrap_static_fns.c")
