@@ -3,6 +3,8 @@ name = "lean4_sys"
 version = "0.1.0"
 edition = "2021"
 authors = ["lemonhx <lemonhx@lemonhx.moe>"]
+description = "Lean4 FFI"
+license = "MIT"
 
 [dependencies]
 
