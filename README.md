@@ -1,4 +1,6 @@
 # Lean4 sys
+[![crates.io](https://img.shields.io/crates/v/lean4_sys)](https://crates.io/crates/lean4_sys)
+[![docs.rs](https://img.shields.io/docsrs/lean4_sys)](https://docs.rs/crate/lean4_sys/latest)
 
 very low level bindings to the Lean4 runtime
 
