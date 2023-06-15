@@ -48,8 +48,6 @@ fn main() {
     println!("cargo:rustc-link-lib=leanshared");
     println!("cargo:rustc-link-arg=-Wl,-rpath,{}", lean_dir.display());
 
-
-
     let bindings = bindgen::Builder::default()
         .header("lean.h")
         .use_core()

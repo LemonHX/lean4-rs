@@ -1,0 +1,13 @@
+[package]
+name = "lean4_sys"
+version = "0.1.0"
+edition = "2021"
+authors = ["lemonhx <lemonhx@lemonhx.moe>"]
+description = "Lean4 FFI"
+license = "MIT"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = { version = "0.65.1", features = ["experimental", "runtime"] }
+cc = "1.0"

@@ -1,13 +1,15 @@
 [package]
-name = "lean4_sys"
+name = "lean4_rs"
 version = "0.1.0"
 edition = "2021"
-authors = ["lemonhx <lemonhx@lemonhx.moe>"]
-description = "Lean4 FFI"
-license = "MIT"
+
 
 [dependencies]
+lean4_sys = { path = "lean4_sys" }
+lean4_macro = { path = "lean4_macro" }
 
-[build-dependencies]
-bindgen = { version = "0.65.1", features = ["experimental", "runtime"] }
-cc = "1.0"
+[workspace]
+members = [
+    "lean4_macro",
+    "lean4_sys",
+]
