@@ -1,2 +1,4 @@
 /target
 .vscode/
+bindings.rs
+wrap_static_fns.c

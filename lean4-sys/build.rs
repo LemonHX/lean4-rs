@@ -63,6 +63,6 @@ fn main() {
         .compile("wrap_static_fns");
 
     bindings
-        .write_to_file("src/bindings.rs")
+        .write_to_file("bindings.rs")
         .expect("Couldn't write bindings!");
 }
