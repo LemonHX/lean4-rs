@@ -1,187 +1,180 @@
 use lean4_sys::*;
 
+use crate::Lean4Obj;
+
+#[repr(transparent)]
 #[derive(Clone, Copy, Debug)]
 pub struct Closure {
-    ptr: *mut lean_object,
+    ptr: Lean4Obj,
 }
 
 impl Closure {
-    pub fn new(ptr: *mut lean_object) -> Self {
+    pub fn new(ptr: Lean4Obj) -> Self {
         Self { ptr }
     }
     pub fn get_func_ptr(self) -> *mut std::ffi::c_void {
-        unsafe { lean_closure_fun(self.ptr) }
+        unsafe { lean_closure_fun(self.ptr.into()) }
     }
     pub fn get_arity(self) -> usize {
-        unsafe { lean_closure_arity(self.ptr) as usize }
+        unsafe { lean_closure_arity(self.ptr.into()) as usize }
     }
     pub fn get_num_fixed(self) -> usize {
-        unsafe { lean_closure_num_fixed(self.ptr) as usize }
+        unsafe { lean_closure_num_fixed(self.ptr.into()) as usize }
     }
-    pub fn get_args_ptr(self) -> &'static mut [*mut lean_object] {
-        let pptr = unsafe { lean_closure_arg_cptr(self.ptr) };
+    pub fn get_args_ptr(self) -> &'static mut [Lean4Obj] {
+        let pptr = unsafe { lean_closure_arg_cptr(self.ptr.into()) };
         let arity = self.get_arity();
-        unsafe { std::slice::from_raw_parts_mut(pptr, arity) }
+        unsafe { std::slice::from_raw_parts_mut(std::mem::transmute(pptr), arity) }
     }
     /// `f` is the function pointer
     /// `arity` is the number of arguments expected by `f`
     /// `num_fixed` is the number of arguments that have been already fixed
-    pub fn alloc(f: *mut std::ffi::c_void, arity: usize, num_fixed: usize) -> *mut lean_object {
-        unsafe { lean_alloc_closure(f, arity as u32, num_fixed as u32) }
+    pub fn alloc(f: *mut std::ffi::c_void, arity: usize, num_fixed: usize) -> Lean4Obj {
+        unsafe { lean_alloc_closure(f, arity as u32, num_fixed as u32).into() }
     }
 
-    pub fn get_arg(self, i: usize) -> *mut lean_object {
-        unsafe { lean_closure_get(self.ptr, i as u32) }
+    pub fn get_arg(self, i: usize) -> Lean4Obj {
+        unsafe { lean_closure_get(self.ptr.into(), i as u32).into() }
     }
 
-    pub fn set_arg(self, i: usize, arg: *mut lean_object) {
-        unsafe { lean_closure_set(self.ptr, i as u32, arg) }
+    pub fn set_arg(self, i: usize, arg: Lean4Obj) {
+        unsafe { lean_closure_set(self.ptr.into(), i as u32, arg.into()) }
     }
 }
 
 // for better user experience
 // ---------- call ----------
 // 1
-impl std::ops::FnOnce<(*mut lean_object,)> for Closure {
-    type Output = *mut lean_object;
+impl std::ops::FnOnce<(Lean4Obj,)> for Closure {
+    type Output = Lean4Obj;
 
-    extern "rust-call" fn call_once(self, args: (*mut lean_object,)) -> Self::Output {
-        unsafe { lean_apply_1(self.ptr, args.0) }
+    extern "rust-call" fn call_once(self, args: (Lean4Obj,)) -> Self::Output {
+        unsafe { lean_apply_1(self.ptr.into(), args.0.into()).into() }
     }
 }
 
 // 2
-impl std::ops::FnOnce<(*mut lean_object, *mut lean_object)> for Closure {
-    type Output = *mut lean_object;
+impl std::ops::FnOnce<(Lean4Obj, Lean4Obj)> for Closure {
+    type Output = Lean4Obj;
 
-    extern "rust-call" fn call_once(
-        self,
-        args: (*mut lean_object, *mut lean_object),
-    ) -> Self::Output {
-        unsafe { lean_apply_2(self.ptr, args.0, args.1) }
+    extern "rust-call" fn call_once(self, args: (Lean4Obj, Lean4Obj)) -> Self::Output {
+        unsafe { lean_apply_2(self.ptr.into(), args.0.into(), args.1.into()).into() }
     }
 }
 
 // 3
-impl std::ops::FnOnce<(*mut lean_object, *mut lean_object, *mut lean_object)> for Closure {
-    type Output = *mut lean_object;
+impl std::ops::FnOnce<(Lean4Obj, Lean4Obj, Lean4Obj)> for Closure {
+    type Output = Lean4Obj;
 
-    extern "rust-call" fn call_once(
-        self,
-        args: (*mut lean_object, *mut lean_object, *mut lean_object),
-    ) -> Self::Output {
-        unsafe { lean_apply_3(self.ptr, args.0, args.1, args.2) }
+    extern "rust-call" fn call_once(self, args: (Lean4Obj, Lean4Obj, Lean4Obj)) -> Self::Output {
+        unsafe { lean_apply_3(self.ptr.into(), args.0.into(), args.1.into(), args.2.into()).into() }
     }
 }
 
 // 4
-impl
-    std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-    )> for Closure
-{
-    type Output = *mut lean_object;
+impl std::ops::FnOnce<(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj)> for Closure {
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
-        args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ),
+        args: (Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj),
     ) -> Self::Output {
-        unsafe { lean_apply_4(self.ptr, args.0, args.1, args.2, args.3) }
+        unsafe {
+            lean_apply_4(
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+            )
+            .into()
+        }
     }
 }
 
 // 5
-impl
-    std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-    )> for Closure
-{
-    type Output = *mut lean_object;
+impl std::ops::FnOnce<(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj)> for Closure {
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
-        args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ),
+        args: (Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj),
     ) -> Self::Output {
-        unsafe { lean_apply_5(self.ptr, args.0, args.1, args.2, args.3, args.4) }
+        unsafe {
+            lean_apply_5(
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+            )
+            .into()
+        }
     }
 }
 
 // 6
-impl
-    std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-    )> for Closure
-{
-    type Output = *mut lean_object;
+impl std::ops::FnOnce<(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj)> for Closure {
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
-        args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ),
+        args: (Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj),
     ) -> Self::Output {
-        unsafe { lean_apply_6(self.ptr, args.0, args.1, args.2, args.3, args.4, args.5) }
+        unsafe {
+            lean_apply_6(
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+            )
+            .into()
+        }
     }
 }
 
 // 7
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_7(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
             )
+            .into()
         }
     }
 }
@@ -189,35 +182,44 @@ impl
 // 8
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_8(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
             )
+            .into()
         }
     }
 }
@@ -225,37 +227,47 @@ impl
 // 9
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_9(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7, args.8,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
+                args.8.into(),
             )
+            .into()
         }
     }
 }
@@ -263,40 +275,50 @@ impl
 // 10
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_10(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7, args.8,
-                args.9,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
+                args.8.into(),
+                args.9.into(),
             )
+            .into()
         }
     }
 }
@@ -304,42 +326,53 @@ impl
 // 11
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_11(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7, args.8,
-                args.9, args.10,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
+                args.8.into(),
+                args.9.into(),
+                args.10.into(),
             )
+            .into()
         }
     }
 }
@@ -347,44 +380,56 @@ impl
 // 12
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_12(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7, args.8,
-                args.9, args.10, args.11,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
+                args.8.into(),
+                args.9.into(),
+                args.10.into(),
+                args.11.into(),
             )
+            .into()
         }
     }
 }
@@ -392,46 +437,59 @@ impl
 // 13
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_13(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7, args.8,
-                args.9, args.10, args.11, args.12,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
+                args.8.into(),
+                args.9.into(),
+                args.10.into(),
+                args.11.into(),
+                args.12.into(),
             )
+            .into()
         }
     }
 }
@@ -439,48 +497,62 @@ impl
 // 14
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_14(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7, args.8,
-                args.9, args.10, args.11, args.12, args.13,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
+                args.8.into(),
+                args.9.into(),
+                args.10.into(),
+                args.11.into(),
+                args.12.into(),
+                args.13.into(),
             )
+            .into()
         }
     }
 }
@@ -488,50 +560,65 @@ impl
 // 15
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_15(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7, args.8,
-                args.9, args.10, args.11, args.12, args.13, args.14,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
+                args.8.into(),
+                args.9.into(),
+                args.10.into(),
+                args.11.into(),
+                args.12.into(),
+                args.13.into(),
+                args.14.into(),
             )
+            .into()
         }
     }
 }
@@ -539,158 +626,122 @@ impl
 // 16
 impl
     std::ops::FnOnce<(
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
-        *mut lean_object,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
+        Lean4Obj,
     )> for Closure
 {
-    type Output = *mut lean_object;
+    type Output = Lean4Obj;
 
     extern "rust-call" fn call_once(
         self,
         args: (
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
         ),
     ) -> Self::Output {
         unsafe {
             lean_apply_16(
-                self.ptr, args.0, args.1, args.2, args.3, args.4, args.5, args.6, args.7, args.8,
-                args.9, args.10, args.11, args.12, args.13, args.14, args.15,
+                self.ptr.into(),
+                args.0.into(),
+                args.1.into(),
+                args.2.into(),
+                args.3.into(),
+                args.4.into(),
+                args.5.into(),
+                args.6.into(),
+                args.7.into(),
+                args.8.into(),
+                args.9.into(),
+                args.10.into(),
+                args.11.into(),
+                args.12.into(),
+                args.13.into(),
+                args.14.into(),
+                args.15.into(),
             )
+            .into()
         }
     }
 }
 
 //---------- from ----------
-impl From<*mut lean_object> for Closure {
-    fn from(ptr: *mut lean_object) -> Self {
+impl From<Lean4Obj> for Closure {
+    fn from(ptr: Lean4Obj) -> Self {
         Self::new(ptr)
     }
 }
 
 // 1
-impl From<extern "C" fn(*mut lean_object) -> *mut lean_object> for Closure {
-    fn from(f: extern "C" fn(*mut lean_object) -> *mut lean_object) -> Self {
+impl From<extern "C" fn(Lean4Obj) -> Lean4Obj> for Closure {
+    fn from(f: extern "C" fn(Lean4Obj) -> Lean4Obj) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 1, 0))
     }
 }
 
 // 2
-impl From<extern "C" fn(*mut lean_object, *mut lean_object) -> *mut lean_object> for Closure {
-    fn from(f: extern "C" fn(*mut lean_object, *mut lean_object) -> *mut lean_object) -> Self {
+impl From<extern "C" fn(Lean4Obj, Lean4Obj) -> Lean4Obj> for Closure {
+    fn from(f: extern "C" fn(Lean4Obj, Lean4Obj) -> Lean4Obj) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 2, 0))
     }
 }
 
 // 3
-impl From<extern "C" fn(*mut lean_object, *mut lean_object, *mut lean_object) -> *mut lean_object>
-    for Closure
-{
-    fn from(
-        f: extern "C" fn(*mut lean_object, *mut lean_object, *mut lean_object) -> *mut lean_object,
-    ) -> Self {
+impl From<extern "C" fn(Lean4Obj, Lean4Obj, Lean4Obj) -> Lean4Obj> for Closure {
+    fn from(f: extern "C" fn(Lean4Obj, Lean4Obj, Lean4Obj) -> Lean4Obj) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 3, 0))
     }
 }
 
 // 4
-impl
-    From<
-        extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
-    > for Closure
-{
-    fn from(
-        f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
-    ) -> Self {
+impl From<extern "C" fn(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj) -> Lean4Obj> for Closure {
+    fn from(f: extern "C" fn(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj) -> Lean4Obj) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 4, 0))
     }
 }
 
 // 5
-impl
-    From<
-        extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
-    > for Closure
-{
+impl From<extern "C" fn(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj) -> Lean4Obj> for Closure {
     fn from(
-        f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+        f: extern "C" fn(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 5, 0))
     }
 }
 
 // 6
-impl
-    From<
-        extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
-    > for Closure
+impl From<extern "C" fn(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj) -> Lean4Obj>
+    for Closure
 {
     fn from(
-        f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+        f: extern "C" fn(Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj, Lean4Obj) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 6, 0))
     }
@@ -700,26 +751,26 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 7, 0))
     }
@@ -729,28 +780,28 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 8, 0))
     }
@@ -760,30 +811,30 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 9, 0))
     }
@@ -793,32 +844,32 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 10, 0))
     }
@@ -828,34 +879,34 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 11, 0))
     }
@@ -865,36 +916,36 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 12, 0))
     }
@@ -904,38 +955,38 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 13, 0))
     }
@@ -945,40 +996,40 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 14, 0))
     }
@@ -988,42 +1039,42 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 15, 0))
     }
@@ -1033,44 +1084,44 @@ impl
 impl
     From<
         extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     > for Closure
 {
     fn from(
         f: extern "C" fn(
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-            *mut lean_object,
-        ) -> *mut lean_object,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+            Lean4Obj,
+        ) -> Lean4Obj,
     ) -> Self {
         Self::new(Self::alloc(f as *mut std::ffi::c_void, 16, 0))
     }

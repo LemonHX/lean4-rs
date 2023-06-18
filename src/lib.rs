@@ -3,6 +3,7 @@
 #![feature(tuple_trait)]
 
 pub mod closure;
+pub mod ctor;
 pub mod string;
 
 pub use lean4_macro::Lean4;
@@ -13,10 +14,29 @@ use lean4_sys::{
     lean_register_external_class,
 };
 
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+pub struct Lean4Obj(*mut lean_object);
+
+unsafe impl Send for Lean4Obj {}
+unsafe impl Sync for Lean4Obj {}
+
+impl From<*mut lean_object> for Lean4Obj {
+    fn from(ptr: *mut lean_object) -> Self {
+        Self(ptr)
+    }
+}
+
+impl From<Lean4Obj> for *mut lean_object {
+    fn from(obj: Lean4Obj) -> Self {
+        obj.0
+    }
+}
+
 /// you must have #[repr(transparent)] or #[repr(C)] on your struct
 /// and #[no_mangle] on your static mut lean4_object_*
 /// or else you will get a **segfault**
-trait Lean4Object
+pub trait Lean4Object
 where
     Self: Sized,
 {

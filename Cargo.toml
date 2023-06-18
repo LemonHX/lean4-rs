@@ -8,6 +8,9 @@ edition = "2021"
 lean4_sys = { path = "lean4_sys" }
 lean4_macro = { path = "lean4_macro" }
 
+futures = { version = "0.3", features = ["std", "async-await"], default-features = false }
+pin-project-lite = "0.2"
+
 [workspace]
 members = [
     "lean4_macro",

@@ -4,6 +4,7 @@ use lean4_sys::*;
 
 /// the ABI of lean4 string is equivalent to C's char*
 /// with utf8 encoding by ending with a null byte
+#[repr(transparent)]
 #[derive(Clone, Copy)]
 pub struct LString {
     ptr: *mut lean_object,
