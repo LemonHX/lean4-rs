@@ -2,17 +2,19 @@
 name = "lean4-rs"
 version = "0.1.0"
 edition = "2021"
-
+authors = ["lemonhx <lemonhx@lemonhx.moe>"]
+description = "Lean4 FFI"
+license = "MIT"
 
 [dependencies]
-lean4_sys = { path = "lean4_sys" }
-lean4_macro = { path = "lean4_macro" }
+lean4-sys = { path = "lean4-sys" }
+lean4-macro = { path = "lean4-macro" }
 
 futures = { version = "0.3", features = ["std", "async-await"], default-features = false }
 pin-project-lite = "0.2"
 
 [workspace]
 members = [
-    "lean4_macro",
-    "lean4_sys",
+    "lean4-macro",
+    "lean4-sys",
 ]

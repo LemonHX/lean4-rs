@@ -182,17 +182,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
-name = "lean4-rs"
-version = "0.1.0"
-dependencies = [
- "futures",
- "lean4_macro",
- "lean4_sys",
- "pin-project-lite",
-]
-
-[[package]]
-name = "lean4_macro"
+name = "lean4-macro"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
@@ -201,7 +191,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "lean4_sys"
+name = "lean4-rs"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "lean4-macro",
+ "lean4-sys",
+ "pin-project-lite",
+]
+
+[[package]]
+name = "lean4-sys"
 version = "0.1.3"
 dependencies = [
  "bindgen",
