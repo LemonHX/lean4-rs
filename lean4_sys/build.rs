@@ -27,7 +27,7 @@ fn main() {
     let exists = if cfg!(target_os = "windows") {
         shared_lib.push("libleanshared.dll");
         shared_lib.exists()
-    } else if cfg!(target_os = "mac") {
+    } else if cfg!(target_os = "macos") {
         shared_lib.push("libleanshared.dylib");
         shared_lib.exists()
     } else if cfg!(unix) {
