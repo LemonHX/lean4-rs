@@ -16,7 +16,7 @@ use lean4_sys::{
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
-pub struct Lean4Obj(*mut lean_object);
+pub struct Lean4Obj(pub *mut lean_object);
 
 unsafe impl Send for Lean4Obj {}
 unsafe impl Sync for Lean4Obj {}

@@ -52,7 +52,7 @@ pub fn lean4_inductive(input: TokenStream) -> TokenStream {
 
                 union_fields = quote! {
                     #union_fields
-                    #variant_ident : #fields
+                    #variant_ident : #fields,
                 };
 
                 let mut ctor_gets = quote!();
@@ -129,7 +129,7 @@ pub fn lean4_inductive(input: TokenStream) -> TokenStream {
         impl From<Lean4Obj> for #name {
             fn from(obj: Lean4Obj) -> Self {
                 union #union_name {
-                    #union_fields,
+                    #union_fields
                 }
 
                 #[repr(packed)]
@@ -159,5 +159,6 @@ pub fn lean4_inductive(input: TokenStream) -> TokenStream {
             }
         }
     };
+    // panic!("{}", output);
     output.into()
 }
