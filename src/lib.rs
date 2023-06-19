@@ -7,6 +7,7 @@ pub mod ctor;
 pub mod string;
 
 pub use lean4_macro::Lean4;
+pub use lean4_macro::Lean4Inductive;
 
 pub use lean4_sys;
 use lean4_sys::{
