@@ -10,8 +10,9 @@ license = "MIT"
 lean4-sys = { path = "lean4-sys" }
 lean4-macro = { path = "lean4-macro" }
 
+
+tokio = { version = "1.13", features = ["all"]}
 futures = { version = "0.3", features = ["std", "async-await"], default-features = false }
-pin-project-lite = "0.2"
 
 [workspace]
 members = [

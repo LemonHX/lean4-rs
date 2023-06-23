@@ -2,20 +2,31 @@ use std::fmt::{Debug, Display};
 
 use lean4_sys::*;
 
+use crate::Lean4Obj;
+
 /// the ABI of lean4 string is equivalent to C's char*
 /// with utf8 encoding by ending with a null byte
 #[repr(transparent)]
 #[derive(Clone, Copy)]
 pub struct LString {
-    ptr: *mut lean_object,
+    ptr: Lean4Obj,
 }
 
 impl LString {
-    pub fn as_ptr(&self) -> *mut lean_object {
-        self.ptr
-    }
     pub fn as_str(&self) -> &str {
         self.into()
+    }
+}
+
+impl From<Lean4Obj> for LString {
+    fn from(obj: Lean4Obj) -> Self {
+        LString { ptr: obj.into() }
+    }
+}
+
+impl Into<Lean4Obj> for LString {
+    fn into(self) -> Lean4Obj {
+        self.ptr
     }
 }
 
@@ -34,14 +45,8 @@ impl Display for LString {
 }
 
 impl LString {
-    pub fn new(s: *mut lean_object) -> Self {
+    pub fn new(s: Lean4Obj) -> Self {
         LString { ptr: s }
-    }
-}
-
-impl Into<LString> for *mut lean_object {
-    fn into(self) -> LString {
-        LString { ptr: self }
     }
 }
 
@@ -51,6 +56,7 @@ impl From<String> for LString {
             let s = std::ffi::CString::new(s).unwrap();
             let s = s.as_ptr();
             let s = lean_mk_string(s);
+            let s = Lean4Obj(s);
             LString { ptr: s }
         }
     }
@@ -62,6 +68,7 @@ impl From<&str> for LString {
             let s = std::ffi::CString::new(s).unwrap();
             let s = s.as_ptr();
             let s = lean_mk_string(s);
+            let s = Lean4Obj(s);
             LString { ptr: s }
         }
     }
@@ -70,7 +77,7 @@ impl From<&str> for LString {
 impl Into<&str> for LString {
     fn into(self) -> &'static str {
         unsafe {
-            let s = lean_string_cstr(self.ptr);
+            let s = lean_string_cstr(self.ptr.0);
             let s = std::ffi::CStr::from_ptr(s);
             s.to_str().unwrap()
         }
@@ -80,11 +87,5 @@ impl Into<&str> for LString {
 impl Into<&str> for &LString {
     fn into(self) -> &'static str {
         (*self).into()
-    }
-}
-
-impl Into<*mut lean_object> for LString {
-    fn into(self) -> *mut lean_object {
-        self.ptr
     }
 }

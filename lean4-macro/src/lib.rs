@@ -126,30 +126,32 @@ pub fn lean4_inductive(input: TokenStream) -> TokenStream {
 
     let output = quote! {
         #[allow(non_snake_case)]
+        union #union_name {
+            #union_fields
+        }
+
+        #[repr(packed)]
+        #[allow(non_snake_case)]
+        struct #struct_name {
+            tag: u32,
+            data: #union_name,
+        }
+
+        impl #struct_name {
+            fn new(obj: Lean4Obj) -> Self {
+                unsafe {
+                    let tag = lean_obj_tag(obj.0);
+                    let data = match tag {
+                        #match_cases
+                    };
+                    #struct_name { tag, data }
+                }
+            }
+        }
+
+        #[allow(non_snake_case)]
         impl From<Lean4Obj> for #name {
             fn from(obj: Lean4Obj) -> Self {
-                union #union_name {
-                    #union_fields
-                }
-
-                #[repr(packed)]
-                struct #struct_name {
-                    tag: u32,
-                    data: #union_name,
-                }
-
-                impl #struct_name {
-                    pub fn new(obj: Lean4Obj) -> Self {
-                        unsafe {
-                            let tag = lean_obj_tag(obj.0);
-                            let data = match tag {
-                                #match_cases
-                            };
-                            #struct_name { tag, data }
-                        }
-                    }
-                }
-
                 unsafe {
                     let obj = #struct_name::new(obj);
                     match obj.tag {

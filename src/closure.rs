@@ -3,9 +3,33 @@ use lean4_sys::*;
 use crate::Lean4Obj;
 
 #[repr(transparent)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub struct Closure {
-    ptr: Lean4Obj,
+    pub ptr: Lean4Obj,
+}
+
+impl std::fmt::Debug for Closure {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Closure")
+            .field("ptr", &self.ptr)
+            .field("func_ptr", &self.get_func_ptr())
+            .field("arity", &self.get_arity())
+            .field("num_fixed", &self.get_num_fixed())
+            .field("args_ptr", &self.get_args_ptr())
+            .finish()
+    }
+}
+
+impl From<Lean4Obj> for Closure {
+    fn from(ptr: Lean4Obj) -> Self {
+        Self::new(ptr)
+    }
+}
+
+impl Into<Lean4Obj> for Closure {
+    fn into(self) -> Lean4Obj {
+        self.ptr
+    }
 }
 
 impl Closure {
@@ -693,12 +717,6 @@ impl
 }
 
 //---------- from ----------
-impl From<Lean4Obj> for Closure {
-    fn from(ptr: Lean4Obj) -> Self {
-        Self::new(ptr)
-    }
-}
-
 // 1
 impl From<extern "C" fn(Lean4Obj) -> Lean4Obj> for Closure {
     fn from(f: extern "C" fn(Lean4Obj) -> Lean4Obj) -> Self {
