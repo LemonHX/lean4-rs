@@ -9,7 +9,7 @@ use crate::Lean4Obj;
 #[repr(transparent)]
 #[derive(Clone, Copy)]
 pub struct LString {
-    ptr: Lean4Obj,
+    pub ptr: Lean4Obj,
 }
 
 impl LString {

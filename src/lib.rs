@@ -2,8 +2,12 @@
 #![feature(unboxed_closures)]
 #![feature(tuple_trait)]
 
+pub mod array;
+pub mod async_tokio;
 pub mod closure;
 pub mod ctor;
+pub mod io;
+pub mod option;
 pub mod string;
 
 pub use lean4_macro::Lean4;
@@ -53,7 +57,7 @@ where
     unsafe extern "C" fn foreach(_: *mut std::ffi::c_void, _: b_lean_obj_arg) {}
 
     #[inline(always)]
-    fn into_lean_object_ptr(self) -> *mut lean_object {
+    fn into_lean_object_ptr(self) -> Lean4Obj {
         unsafe {
             if Self::get_registed_class().is_null() {
                 *Self::get_registed_class() =
@@ -62,14 +66,17 @@ where
             let boxed_self = Box::new(self);
             let leaked = Box::leak(boxed_self);
             let leaked_ptr_c_void = leaked as *mut _ as *mut std::ffi::c_void;
-            lean_alloc_external(*Self::get_registed_class(), leaked_ptr_c_void)
+            Lean4Obj(lean_alloc_external(
+                *Self::get_registed_class(),
+                leaked_ptr_c_void,
+            ))
         }
     }
 
     #[inline(always)]
-    fn from_lean_object_ptr(ptr: *mut lean_object) -> &'static mut Self {
+    fn from_lean_object_ptr(ptr: Lean4Obj) -> &'static mut Self {
         unsafe {
-            let s = lean_get_external_data(ptr) as *mut Self;
+            let s = lean_get_external_data(ptr.0) as *mut Self;
             assert!(s != std::ptr::null_mut());
             &mut *s
         }
