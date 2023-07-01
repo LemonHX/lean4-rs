@@ -7,6 +7,9 @@ pub struct LArray {
     pub ptr: Lean4Obj,
 }
 
+unsafe impl Send for LArray {}
+unsafe impl Sync for LArray {}
+
 impl From<Lean4Obj> for LArray {
     fn from(obj: Lean4Obj) -> Self {
         Self { ptr: obj }

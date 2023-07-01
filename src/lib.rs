@@ -3,7 +3,6 @@
 #![feature(tuple_trait)]
 
 pub mod array;
-pub mod async_tokio;
 pub mod closure;
 pub mod ctor;
 pub mod io;
@@ -50,6 +49,7 @@ where
 
     /// lean4 will call this after its internal RC is dropped
     unsafe extern "C" fn finalize(s: *mut std::ffi::c_void) {
+        println!("call finalize");
         let bx = Box::from_raw(s as *mut Self);
         drop(bx);
     }
@@ -66,10 +66,11 @@ where
             let boxed_self = Box::new(self);
             let leaked = Box::leak(boxed_self);
             let leaked_ptr_c_void = leaked as *mut _ as *mut std::ffi::c_void;
-            Lean4Obj(lean_alloc_external(
-                *Self::get_registed_class(),
-                leaked_ptr_c_void,
-            ))
+            let ret = lean_alloc_external(*Self::get_registed_class(), leaked_ptr_c_void);
+            let ret_mut = &mut *ret;
+            ret_mut.m_rc = 1;
+            assert_eq!(ret_mut.m_rc, 1);
+            Lean4Obj(ret_mut)
         }
     }
 

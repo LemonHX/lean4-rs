@@ -1,9 +1,10 @@
-use std::sync::atomic::AtomicUsize;
-
 use futures::future::select_all;
-use lean4_sys::{lean_alloc_object, lean_box, lean_dec, lean_object};
-use scc::HashMap;
+use std::future::Future;
 use tokio::sync::oneshot::{Receiver, Sender};
+
+use crate::Lean4Object;
+use lean4_macro::Lean4;
+use lean4_sys::{lean_box, lean_dec, lean_external_class};
 
 use crate::{array::LArray, closure::Closure, io::LIO, option::LOption, Lean4Obj};
 
@@ -11,104 +12,76 @@ extern "C" {
     fn lean_initialize_runtime_module();
 }
 
-pub struct System {
-    all_tasks: HashMap<usize, &'static TokioTask>,
-}
-
-impl System {
-    fn new() -> Self {
-        Self {
-            all_tasks: HashMap::new(),
-        }
-    }
-}
-
 lazy_static::lazy_static! {
-    pub static ref GLOBAL_SYSTEM : System = System::new();
+    /// yeah, I think let process to collect this runtime is perfectly fine
+    /// background process? it will be killed by OS for sure
     pub static ref GLOBAL_TOKIO_RT : tokio::runtime::Runtime = tokio::runtime::Builder::new_multi_thread()
         .on_thread_start(|| {
             unsafe {
+                // initialize lean runtime on each thread
                 lean_initialize_runtime_module();
             }
         })
         .enable_all()
         .build()
-        .unwrap();
+        .expect("failed to create tokio runtime");
 }
 
-static GLOBAL_COUNTER: AtomicUsize = AtomicUsize::new(1);
-
 #[repr(C)]
+#[derive(Lean4)]
 pub struct TokioTask {
-    header: lean_object,
-    id: usize,
     receiver: Receiver<Lean4Obj>,
 }
 
-impl std::fmt::Debug for TokioTask {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "TokioTask {{ id: {} }}", self.id)
+impl Drop for TokioTask {
+    fn drop(&mut self) {
+        println!("one future drops");
+    }
+}
+
+impl Future for TokioTask {
+    type Output = Result<Lean4Obj, String>;
+    fn poll(
+        self: std::pin::Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+        let self_ptr = self.get_mut() as *mut TokioTask;
+        let receiver = unsafe { &mut (*self_ptr).receiver };
+        let receiver = std::pin::Pin::new(receiver);
+        let res = receiver.poll(cx).map(|x| x.map_err(|e| e.to_string()));
+
+        // free self pointer
+        let s = unsafe { Box::from_raw(self_ptr) };
+        drop(s);
+        res
     }
 }
 
 impl TokioTask {
-    pub fn from_lean_object_ptr(ptr: Lean4Obj) -> &'static mut Self {
-        unsafe {
-            let ptr = ptr.0 as *mut TokioTask;
-            &mut *ptr
-        }
-    }
-
-    pub fn new_raw() -> &'static mut Self {
-        unsafe {
-            let mem = lean_alloc_object(std::mem::size_of::<TokioTask>());
-            let ptr = mem as *mut TokioTask;
-            let r = &mut *ptr;
-            r.header.set_m_tag(114);
-            r
-        }
-    }
-
-    pub fn new_native() -> (&'static mut Self, Sender<Lean4Obj>) {
-        let id = GLOBAL_COUNTER.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
-        let r = Self::new_raw();
+    pub fn new_native() -> (Lean4Obj, Sender<Lean4Obj>) {
         let (sender, receiver) = tokio::sync::oneshot::channel();
-        r.id = id;
-        unsafe {
-            std::ptr::write(&mut r.receiver, receiver);
-        }
-        GLOBAL_SYSTEM
-            .all_tasks
-            .insert(id, unsafe { &mut *(r as *mut TokioTask) })
-            .unwrap();
+        let r = Self { receiver: receiver };
+        let r = r.into_lean_object_ptr();
         (r, sender)
     }
 
-    pub fn new_lean(result: Lean4Obj) -> &'static mut Self {
-        let r: &mut TokioTask = Self::new_raw();
-        let (cx, rx) = tokio::sync::oneshot::channel();
+    pub fn new_lean(result: Lean4Obj) -> Lean4Obj {
+        let (r, cx) = Self::new_native();
         cx.send(result).unwrap();
-        r.receiver = rx;
         r
-    }
-
-    pub fn into_lean_object_ptr(&'static mut self) -> Lean4Obj {
-        let ptr = self as *mut TokioTask;
-        Lean4Obj(ptr as *mut lean_object)
     }
 }
 
 #[no_mangle]
-pub extern "C" fn tokio_task_mk(c: Lean4Obj) -> Lean4Obj {
-    TokioTask::new_lean(c).into_lean_object_ptr()
+pub extern "C" fn tokio_task_lean_closure(_: Lean4Obj, c: Lean4Obj) -> Lean4Obj {
+    TokioTask::new_lean(Closure::from(c)(unsafe { Lean4Obj(lean_box(0)) }))
 }
 
 #[no_mangle]
 pub extern "C" fn tokio_task_get(lean_self: Lean4Obj) -> Lean4Obj {
     let task = TokioTask::from_lean_object_ptr(lean_self);
     GLOBAL_TOKIO_RT.block_on(async move {
-        let receiver = &mut task.receiver;
-        let res = receiver.await.unwrap();
+        let res = task.await.unwrap();
         LIO::Ok(res).into()
     })
 }
@@ -118,8 +91,6 @@ pub extern "C" fn tokio_task_try_get(lean_self: Lean4Obj) -> Lean4Obj {
     println!("🦀: tokio_task_try_get");
     let task = TokioTask::from_lean_object_ptr(lean_self);
     let receiver = &mut task.receiver;
-
-    std::thread::sleep(std::time::Duration::from_millis(1000));
 
     let ret = receiver.try_recv().ok();
     println!("🦀: tokio_task_try_get {:?}", ret);
@@ -134,16 +105,14 @@ pub extern "C" fn tokio_task_bind(_: Lean4Obj, lean_self: Lean4Obj, lean_f: Lean
     let task = TokioTask::from_lean_object_ptr(lean_self);
     let (r, sender) = TokioTask::new_native();
     GLOBAL_TOKIO_RT.spawn(async move {
-        let receiver = &mut task.receiver;
-        let res = receiver.await.unwrap();
+        let res = task.await.unwrap();
         let f = Closure::from(lean_f);
         let r = f(res);
         let r = TokioTask::from_lean_object_ptr(r);
-        let receiver = &mut r.receiver;
-        let r = receiver.await.unwrap();
+        let r = r.await.unwrap();
         sender.send(r).unwrap();
     });
-    r.into_lean_object_ptr()
+    r
 }
 
 #[no_mangle]
@@ -151,13 +120,12 @@ pub extern "C" fn tokio_task_map(_: Lean4Obj, lean_f: Lean4Obj, lean_task_a: Lea
     let taska = TokioTask::from_lean_object_ptr(lean_task_a);
     let (r, sender) = TokioTask::new_native();
     GLOBAL_TOKIO_RT.spawn(async move {
-        let receiver = &mut taska.receiver;
-        let res = receiver.await.unwrap();
+        let res = taska.await.unwrap();
         let f = Closure::from(lean_f);
         let r = f(res);
         sender.send(r).unwrap();
     });
-    r.into_lean_object_ptr()
+    r
 }
 
 #[no_mangle]
@@ -172,11 +140,10 @@ pub extern "C" fn tokio_task_seq_left(
     cls(unsafe { Lean4Obj(lean_box(0)) });
     let (r, sender) = TokioTask::new_native();
     GLOBAL_TOKIO_RT.spawn(async move {
-        let receiver = &mut taska.receiver;
-        let res = receiver.await.unwrap();
+        let res = taska.await.unwrap();
         sender.send(res).unwrap();
     });
-    r.into_lean_object_ptr()
+    r
 }
 
 #[no_mangle]
@@ -191,11 +158,10 @@ pub extern "C" fn tokio_task_seq_right(
     let taskb = TokioTask::from_lean_object_ptr(taskb);
     let (r, sender) = TokioTask::new_native();
     GLOBAL_TOKIO_RT.spawn(async move {
-        let receiver = &mut taskb.receiver;
-        let res = receiver.await.unwrap();
+        let res = taskb.await.unwrap();
         sender.send(res).unwrap();
     });
-    r.into_lean_object_ptr()
+    r
 }
 
 #[no_mangle]
@@ -208,10 +174,10 @@ pub extern "C" fn tokio_task_select_all(_: Lean4Obj, lean_tasks: Lean4Obj) -> Le
             let receiver = &mut task.receiver;
             receiver
         });
-        let (res, _, _) = select_all(iter).await;
+        let (res, _idx, _rest) = select_all(iter).await;
         let res = res.unwrap();
         unsafe { lean_dec(lean_tasks.0) };
         sender.send(res).unwrap();
     });
-    r.into_lean_object_ptr()
+    r
 }
